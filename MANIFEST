@@ -22,7 +22,8 @@ t/12_cramer.t
 t/13_chisq.t
 t/20_make_matrix.t
 t/21_matrix.t
-t/22_convert_hash.t
+t/22_convert_hashref.t
+t/30_error.t
 t/97_kwalitee.t
 t/98_pod-coverage.t
 t/99_pod.t

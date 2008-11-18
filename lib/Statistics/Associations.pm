@@ -1,7 +1,8 @@
 package Statistics::Associations;
 
 use strict;
-our $VERSION = '0.00002';
+use Carp;
+our $VERSION = '0.00003';
 
 sub new {
     my $class = shift;
@@ -12,6 +13,9 @@ sub new {
 sub phi {
     my $self   = shift;
     my $matrix = shift;
+    unless ( ref $matrix eq 'ARRAY' && ref $matrix->[0] eq 'ARRAY' ) {
+        croak("ERROR: invalid matrix is posted");
+    }
     my $phi    = sqrt( $self->chisq($matrix) / $self->_sum($matrix) );
     return $phi;
 }
@@ -19,14 +23,20 @@ sub phi {
 sub contingency {
     my $self        = shift;
     my $matrix      = shift;
+    unless ( ref $matrix eq 'ARRAY' && ref $matrix->[0] eq 'ARRAY' ) {
+        croak("ERROR: invalid matrix is posted");
+    }
     my $x2          = $self->chisq($matrix);
-    my $contingenvy = sqrt( $x2 / ( $self->_sum($matrix) + $x2 ) );
-    return $contingenvy;
+    my $contingency = sqrt( $x2 / ( $self->_sum($matrix) + $x2 ) );
+    return $contingency;
 }
 
 sub cramer {
-    my $self    = shift;
-    my $matrix  = shift;
+    my $self   = shift;
+    my $matrix = shift;
+    unless ( ref $matrix eq 'ARRAY' && ref $matrix->[0] eq 'ARRAY' ) {
+        croak("ERROR: invalid matrix is posted");
+    }
     my $row_num = @$matrix;
     my $col_num = @{ $matrix->[0] };
     my $n;
@@ -39,6 +49,12 @@ sub cramer {
 sub chisq {
     my $self   = shift;
     my $matrix = shift;
+    unless ( ref $matrix eq 'ARRAY' && ref $matrix->[0] eq 'ARRAY' ) {
+        croak("ERROR: invalid matrix is posted");
+    }
+    $self->{matrix}    = $matrix;
+    $self->{row_count} = @$matrix;
+    $self->{col_count} = @{ $matrix->[0] };
     my $x2;
     for my $i ( 0 .. $self->{row_count} - 1 ) {
         for my $j ( 0 .. $self->{col_count} - 1 ) {
@@ -98,9 +114,13 @@ sub make_matrix {
     my $row_label = shift;
     my $col_label = shift;
     my $value     = shift;
-    unless ( defined $row_label ) { croak("undefined row_label is posted"); }
-    unless ( defined $col_label ) { croak("undefined col_label is posted"); }
-    unless ( defined $value )     { $value = 1; }
+    unless ( defined $row_label ) {
+        croak("ERROR: undefined row_label is posted");
+    }
+    unless ( defined $col_label ) {
+        croak("ERROR: undefined col_label is posted");
+    }
+    unless ( defined $value ) { $value = 1; }
     my $row_num = $self->_key2num( { row => $row_label } );
     my $col_num = $self->_key2num( { col => $col_label } );
     $self->{matrix}->[$row_num]->[$col_num] += $value;
@@ -124,12 +144,12 @@ sub matrix {
             $self->{matrix}->[$i]->[$j] ||= 0;
         }
     }
-    return $self->{matrix};
+    return $self->{matrix} || [];
 }
 
-sub convert_hash {
+sub convert_hashref {
     my $self = shift;
-    my $hash;
+    my $hash = {};
     for my $i ( 0 .. $self->{row_count} - 1 ) {
         for my $j ( 0 .. $self->{col_count} - 1 ) {
             my $row_label = $self->{row_label}->[$i];
@@ -168,7 +188,8 @@ Statistics::Associations - Calculates Association Coefficients of Nominal Scale.
   while(<STDIN>){
       my $row_label = ...;
       my $col_label = ...;
-      $asso->make_matrix( $row_label, $col_label );
+      my $value = ...;
+      $asso->make_matrix( $row_label, $col_label, $value );
   }
   my $matrix = $asso->matrix;
 
@@ -177,7 +198,7 @@ Statistics::Associations - Calculates Association Coefficients of Nominal Scale.
 
 =head1 DESCRIPTION
 
-Statistics-Associations is a calculator of Association Coefficients that specialized in 'Nominal Scale'.
+Statistics::Associations is a calculator of Association Coefficients that specialized in 'Nominal Scale'.
 
 It calculates next three coeffients.
 
@@ -187,7 +208,7 @@ It calculates next three coeffients.
 
 And it calculates chi-square, too.
 
-And then, it helps you to making matix in a loop that looks like parsing logs.
+And then, it helps you to making matrix in a loop that looks like parsing logs.
 
 =head1 METHODS
 
@@ -195,17 +216,17 @@ And then, it helps you to making matix in a loop that looks like parsing logs.
 
 =head2 phi( $matrix )
 
-=head2 contingenvy( $matrix )
+=head2 contingency( $matrix )
 
 =head2 cramer( $matrix )
 
 =head2 chisq( $matrix )
 
-=head2 make_matrix( $row_label, $col_label )
+=head2 make_matrix( $row_label, $col_label, [$value] )
 
 =head2 matrix()
 
-=head2 convert_hash()
+=head2 convert_hashref()
 
 =head1 AUTHOR
 

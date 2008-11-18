@@ -11,7 +11,7 @@ while (<DATA>) {
 
 # convert_hash() test 
 {
-    my $hash_ref = $asso->convert_hash;
+    my $hash_ref = $asso->convert_hashref;
     my $correct  = {
         'woman' => {
             'unlike' => 5,
@@ -22,7 +22,7 @@ while (<DATA>) {
             'like'   => 6
         }
     };
-    is_deeply( $hash_ref, $correct, "convert_hash() returns correct hash_ref" );
+    is_deeply( $hash_ref, $correct, "convert_hashref() returns correct hash_ref" );
 }
 
 __DATA__
