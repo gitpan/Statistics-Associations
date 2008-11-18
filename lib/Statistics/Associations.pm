@@ -1,7 +1,7 @@
 package Statistics::Associations;
 
 use strict;
-our $VERSION = '0.00001';
+our $VERSION = '0.00002';
 
 sub new {
     my $class = shift;
@@ -145,7 +145,7 @@ __END__
 
 =head1 NAME
 
-Statistics::Associations - Calculats Association Coefficients of Normal Scale.
+Statistics::Associations - Calculates Association Coefficients of Nominal Scale.
 
 =head1 SYNOPSIS
 
@@ -177,7 +177,7 @@ Statistics::Associations - Calculats Association Coefficients of Normal Scale.
 
 =head1 DESCRIPTION
 
-Statistics-Associations is a calculator of Association Coefficients that specialized in 'Normal Scale'.
+Statistics-Associations is a calculator of Association Coefficients that specialized in 'Nominal Scale'.
 
 It calculates next three coeffients.
 
